@@ -47,8 +47,8 @@ end
 
 type ArtificalNeuralNetwork
     layers::Vector{NeuralLayer}
-    n_classes::Int64
-    n_layers::Int64
+    hidden_sizes::Vector{Int64} # Number of nodes in each hidden level
+    classes::Vector{Int64}
 end
 
 function softmax(ann_output::Vector{Float64})
@@ -56,6 +56,12 @@ function softmax(ann_output::Vector{Float64})
     # probability distribution
     ann_output = exp(ann_output)
     ann_output / sum(ann_output)
+end
+
+function ArtificalNeuralNetwork(hidden_layer_size::Integer)
+    ann = ArtificalNeuralNetwork(Array(NeuralLayer,0),
+                                 [hidden_layer_size],
+                                 Array(Int64,0))
 end
 
 function ArtificalNeuralNetwork(in_dim::Integer,
@@ -80,6 +86,22 @@ function back_propigate(nl::NeuralLayer,output_gradient::Vector{Float64})
     nl.w' * output_gradient # return gradient of level below
 end
 
+function init!(ann::ArtificalNeuralNetwork,
+                     x::Matrix{Float64},
+                     y::Vector{Int64})
+    layers = Array(NeuralLayer,length(ann.hidden_sizes) + 1)
+    ann.classes = unique(y)
+    sort!(ann.classes)
+    input_dim = size(x)[2]
+    for i = 1:length(ann.hidden_sizes)
+        out_dim = ann.hidden_sizes[i]
+        layers[i] = NeuralLayer(input_dim,out_dim)
+        input_dim = out_dim
+    end
+    layers[length(layers)] = NeuralLayer(input_dim,length(ann.classes))
+    ann.layers = layers
+    ann
+end
 
 function fit!(ann::ArtificalNeuralNetwork,
               x::Matrix{Float64},
@@ -87,15 +109,17 @@ function fit!(ann::ArtificalNeuralNetwork,
               epochs::Int64 = 5,
               alpha::Float64 = 0.1,
               lambda::Float64 = 0.1)
+    init!(ann,x,y)
     n_obs, n_feats = size(x)
     layers = ann.layers
+    n_layers = length(layers)
     for i = 1:n_obs
-        y_hat = zeros(ann.n_classes)
-        y_hat[y[i]] = 1.
+        y_hat = zeros(length(ann.classes))
+        y_hat[findfirst(ann.classes,y[i])] = 1.
 
         y_pred = predict(ann,x[i,:][:])
         output_gradient = -(y_hat - y_pred)
-        for j = ann.n_layers:-1:2
+        for j = n_layers:-1:2
             # This returns the gradient of the j-1 layer
             next_layer_gr = back_propigate(layers[j],output_gradient)
             next_layer = layers[j-1]
@@ -104,7 +128,7 @@ function fit!(ann::ArtificalNeuralNetwork,
         back_propigate(layers[1],output_gradient)
 
         # Compute delta and step
-        for j = 1:ann.n_layers
+        for j = 1:n_layers
             nl = layers[j]
             # Computer L2 weight penatly
             weight_delta = nl.wgr - lambda * (2 * nl.w)
@@ -126,7 +150,7 @@ end
 # Handle a Matrix input
 function predict(ann::ArtificalNeuralNetwork,x::Matrix{Float64})
     n_obs,n_feats = size(x)
-    y_proba = zeros((n_obs,ann.n_classes))
+    y_proba = zeros((n_obs,length(ann.classes)))
     for i = 1:n_obs
         y_proba[i,:] = predict(ann,x[i,:][:])
     end
