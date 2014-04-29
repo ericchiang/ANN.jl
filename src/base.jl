@@ -62,15 +62,15 @@ function ArtificalNeuralNetwork(hidden_layer_size::Integer)
                                  Array(Int64,0))
 end
 
-function ArtificalNeuralNetwork(in_dim::Integer,
-                                out_dim::Integer,
-                                hidden_layer_size::Integer)
-    hidden_layer = NeuralLayer(in_dim,hidden_layer_size)
-    output_layer = NeuralLayer(hidden_layer_size,out_dim)
-    output_layer.a_func = softmax
-    ArtificalNeuralNetwork([hidden_layer,output_layer],
-                            out_dim,2)
-end
+# function ArtificalNeuralNetwork(in_dim::Integer,
+#                                 out_dim::Integer,
+#                                 hidden_layer_size::Integer)
+#     hidden_layer = NeuralLayer(in_dim,hidden_layer_size)
+#     output_layer = NeuralLayer(hidden_layer_size,out_dim)
+#     output_layer.a_func = softmax
+#     ArtificalNeuralNetwork([hidden_layer,output_layer],
+#                             out_dim,2)
+# end
 
 function forward_propigate(nl::NeuralLayer,x::Vector{Float64})
     nl.hx = x
@@ -97,6 +97,7 @@ function init!(ann::ArtificalNeuralNetwork,
         input_dim = out_dim
     end
     layers[length(layers)] = NeuralLayer(input_dim,length(ann.classes))
+    layers[length(layers)].a_func = softmax
     ann.layers = layers
     ann
 end
@@ -129,9 +130,9 @@ function fit!(ann::ArtificalNeuralNetwork,
         for j = 1:n_layers
             nl = layers[j]
             # Computer L2 weight penatly
-            weight_delta = nl.wgr - lambda * (2 * nl.w)
+            weight_delta = (-nl.wgr) - lambda * (2 * nl.w)
             nl.w = alpha * weight_delta + nl.w
-            nl.b = alpha * nl.b
+            nl.b = alpha * (-nl.b)
         end
     end
 end
@@ -142,7 +143,7 @@ function predict(ann::ArtificalNeuralNetwork,x::Vector{Float64})
     for layer in ann.layers
         x = forward_propigate(layer,x)
     end
-    softmax(x)
+    x
 end
 
 # Handle a Matrix input
