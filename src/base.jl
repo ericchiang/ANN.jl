@@ -28,7 +28,7 @@ end
 
 function NeuralLayer(in_dim::Integer,out_dim::Integer)
     # Glorot & Bengio, 2010
-    b = sqrt(6) / sqrt(in_dim + out_dim)
+    b = 1.0
     NeuralLayer(rand(Uniform(-b,b),out_dim,in_dim),
                 zeros(out_dim),
                 sigm,
