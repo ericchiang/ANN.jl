@@ -1,6 +1,4 @@
 
-using Distributions
-
 type NeuralLayer
     w::Matrix{Float64}   # weights
     b::Vector{Float64}   # biases
