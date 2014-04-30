@@ -56,9 +56,9 @@ function softmax(ann_output::Vector{Float64})
     ann_output / sum(ann_output)
 end
 
-function ArtificalNeuralNetwork(hidden_layer_size::Integer)
+function ArtificalNeuralNetwork(n_hidden_units::Integer)
     ann = ArtificalNeuralNetwork(Array(NeuralLayer,0),
-                                 [hidden_layer_size],
+                                 [n_hidden_units],
                                  Array(Int64,0))
 end
 
@@ -94,7 +94,7 @@ end
 
 function fit!(ann::ArtificalNeuralNetwork,
               x::Matrix{Float64},
-              y::Vector{Int64},
+              y::Vector{Int64};
               epochs::Int64 = 5,
               alpha::Float64 = 0.1,
               lambda::Float64 = 0.1)
