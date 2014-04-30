@@ -28,7 +28,7 @@ end
 
 function NeuralLayer(in_dim::Integer,out_dim::Integer)
     # Glorot & Bengio, 2010
-    b = 1.0
+    b = sqrt(6) / sqrt(in_dim + out_dim)
     NeuralLayer(rand(Uniform(-b,b),out_dim,in_dim),
                 zeros(out_dim),
                 sigm,
@@ -61,16 +61,6 @@ function ArtificalNeuralNetwork(hidden_layer_size::Integer)
                                  [hidden_layer_size],
                                  Array(Int64,0))
 end
-
-# function ArtificalNeuralNetwork(in_dim::Integer,
-#                                 out_dim::Integer,
-#                                 hidden_layer_size::Integer)
-#     hidden_layer = NeuralLayer(in_dim,hidden_layer_size)
-#     output_layer = NeuralLayer(hidden_layer_size,out_dim)
-#     output_layer.a_func = softmax
-#     ArtificalNeuralNetwork([hidden_layer,output_layer],
-#                             out_dim,2)
-# end
 
 function forward_propigate(nl::NeuralLayer,x::Vector{Float64})
     nl.hx = x
@@ -112,27 +102,29 @@ function fit!(ann::ArtificalNeuralNetwork,
     n_obs, n_feats = size(x)
     layers = ann.layers
     n_layers = length(layers)
-    for i = 1:n_obs
-        y_hat = zeros(length(ann.classes))
-        y_hat[findfirst(ann.classes,y[i])] = 1.
+    for _ = 1:epochs
+        for i = 1:n_obs
+            y_hat = zeros(length(ann.classes))
+            y_hat[findfirst(ann.classes,y[i])] = 1.
 
-        y_pred = predict(ann,x[i,:][:])
-        output_gradient = -(y_hat - y_pred)
-        for j = n_layers:-1:2
-            # This returns the gradient of the j-1 layer
-            next_layer_gr = back_propigate(layers[j],output_gradient)
-            next_layer = layers[j-1]
-            output_gradient = next_layer_gr .* next_layer.a_derv(next_layer.pa)
-        end
-        back_propigate(layers[1],output_gradient)
+            y_pred = predict(ann,x[i,:][:])
+            output_gradient = -(y_hat - y_pred)
+            for j = n_layers:-1:2
+                # This returns the gradient of the j-1 layer
+                next_layer_gr = back_propigate(layers[j],output_gradient)
+                next_layer = layers[j-1]
+                output_gradient = next_layer_gr .* next_layer.a_derv(next_layer.pa)
+            end
+            back_propigate(layers[1],output_gradient)
 
-        # Compute delta and step
-        for j = 1:n_layers
-            nl = layers[j]
-            # Computer L2 weight penatly
-            weight_delta = (-nl.wgr) - lambda * (2 * nl.w)
-            nl.w = alpha * weight_delta + nl.w
-            nl.b = alpha * (-nl.b)
+            # Compute delta and step
+            for j = 1:n_layers
+                nl = layers[j]
+                # Computer L2 weight penatly
+                weight_delta = (-nl.wgr) - (lambda * (2 * nl.w))
+                nl.w = alpha * weight_delta + nl.w
+                nl.b = alpha * (-nl.bgr) + nl.b
+            end
         end
     end
 end
@@ -140,8 +132,8 @@ end
 
 # Predict class probabilities for a given observation
 function predict(ann::ArtificalNeuralNetwork,x::Vector{Float64})
-    for layer in ann.layers
-        x = forward_propigate(layer,x)
+    for i in 1:length(ann.layers)
+        x = forward_propigate(ann.layers[i],x)
     end
     x
 end
