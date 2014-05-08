@@ -41,3 +41,4 @@ TODO:
 
 * Remove "Distributions" dependency
 * Allow users to build multilayer networks
+* Accept DataFrames as inputs. `fit!` and `predict` currently require Float64 matrices and vectors. 
