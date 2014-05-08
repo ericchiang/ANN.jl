@@ -1,7 +1,7 @@
 julia-ann
 =========
 
-Implementation of backpropagation artifical neural networks in Julia.
+Implementation of backpropagation artificial neural networks in Julia.
 
 Install (from within Julia interpreter):
 -----------
@@ -16,7 +16,7 @@ julia> using ANN
 
 julia> n_hidden_units = 20
 
-julia> ann = ArtificalNeuralNetwork(n_hidden_units)
+julia> ann = ArtificialNeuralNetwork(n_hidden_units)
 
 julia> n_obs = 150
 

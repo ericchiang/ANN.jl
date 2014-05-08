@@ -43,7 +43,7 @@ function NeuralLayer(in_dim::Integer,out_dim::Integer)
     )
 end
 
-type ArtificalNeuralNetwork
+type ArtificialNeuralNetwork
     layers::Vector{NeuralLayer}
     hidden_sizes::Vector{Int64} # Number of nodes in each hidden level
     classes::Vector{Int64}
@@ -56,8 +56,8 @@ function softmax(ann_output::Vector{Float64})
     ann_output / sum(ann_output)
 end
 
-function ArtificalNeuralNetwork(n_hidden_units::Integer)
-    ann = ArtificalNeuralNetwork(Array(NeuralLayer,0),
+function ArtificialNeuralNetwork(n_hidden_units::Integer)
+    ann = ArtificialNeuralNetwork(Array(NeuralLayer,0),
                                  [n_hidden_units],
                                  Array(Int64,0))
 end
@@ -74,7 +74,7 @@ function back_propigate(nl::NeuralLayer,output_gradient::Vector{Float64})
     nl.w' * output_gradient # return gradient of level below
 end
 
-function init!(ann::ArtificalNeuralNetwork,
+function init!(ann::ArtificialNeuralNetwork,
                      x::Matrix{Float64},
                      y::Vector{Int64})
     layers = Array(NeuralLayer,length(ann.hidden_sizes) + 1)
@@ -92,7 +92,7 @@ function init!(ann::ArtificalNeuralNetwork,
     ann
 end
 
-function fit!(ann::ArtificalNeuralNetwork,
+function fit!(ann::ArtificialNeuralNetwork,
               x::Matrix{Float64},
               y::Vector{Int64};
               epochs::Int64 = 5,
@@ -131,7 +131,7 @@ end
 
 
 # Predict class probabilities for a given observation
-function predict(ann::ArtificalNeuralNetwork,x::Vector{Float64})
+function predict(ann::ArtificialNeuralNetwork,x::Vector{Float64})
     for i in 1:length(ann.layers)
         x = forward_propigate(ann.layers[i],x)
     end
@@ -139,7 +139,7 @@ function predict(ann::ArtificalNeuralNetwork,x::Vector{Float64})
 end
 
 # Handle a Matrix input
-function predict(ann::ArtificalNeuralNetwork,x::Matrix{Float64})
+function predict(ann::ArtificialNeuralNetwork,x::Matrix{Float64})
     n_obs,n_feats = size(x)
     y_proba = zeros((n_obs,length(ann.classes)))
     for i = 1:n_obs

@@ -1,5 +1,5 @@
 module ANN
         using Distributions
-    export NeuralLayer,ArtificalNeuralNetwork,fit!,predict
+    export NeuralLayer,ArtificialNeuralNetwork,fit!,predict
     include("base.jl")
 end
