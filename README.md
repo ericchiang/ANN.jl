@@ -4,11 +4,13 @@ julia-ann
 Implementation of backpropagation artifical neural networks in Julia.
 
 Install (from within Julia interpreter):
+-----------
 ```julia
 julia> Pkg.clone("git:https://github.com/EricChiang/ANN.jl.git")
 ```
 
 Usage:
+----------
 ```julia
 julia> using ANN
 
@@ -32,3 +34,10 @@ julia> X_new = Array(Float64,n_new_obs,n_feats)
 
 julia> y_pred = predict(ann,X_new)
 ```
+
+
+TODO:
+-----
+
+* Remove "Distributions" dependency
+* Allow users to build multilayer networks
