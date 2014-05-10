@@ -29,7 +29,7 @@ end
 function NeuralLayer(in_dim::Integer,out_dim::Integer)
     # Glorot & Bengio, 2010
     b = sqrt(6) / sqrt(in_dim + out_dim)
-    NeuralLayer(rand(Uniform(-b,b),out_dim,in_dim),
+    NeuralLayer(2b * rand(out_dim,in_dim) - b,
                 zeros(out_dim),
                 sigm,
                 sigm_derv,
