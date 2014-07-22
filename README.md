@@ -6,33 +6,30 @@ Implementation of backpropagation artificial neural networks in Julia.
 Install (from within Julia interpreter):
 -----------
 ```julia
-julia> Pkg.clone("git@github.com:EricChiang/ANN.jl.git")
+Pkg.clone("git@github.com:EricChiang/ANN.jl.git")
 ```
 
 Usage:
 ----------
 ```julia
-julia> using ANN
+using ANN
 
-julia> n_hidden_units = 20
+n_hidden_units = 20
 
-julia> ann = ArtificialNeuralNetwork(n_hidden_units)
+ann = ArtificialNeuralNetwork(n_hidden_units)
 
-julia> n_obs = 150
+n_obs = 150
+n_feats = 80
 
-julia> n_feats = 80
+X = rand(Float64, n_obs, n_feats)
+y = rand(Int64, n_obs)
 
-julia> X = Array(Float64,n_obs,n_feats)
+fit!(ann, X, y)
 
-julia> y = Array(Int64,n_obs)
+n_new_obs = 60
+X_new = rand(Float64, n_new_obs, n_feats)
 
-julia> fit!(ann,X,y)
-
-julia> n_new_obs = 60
-
-julia> X_new = Array(Float64,n_new_obs,n_feats)
-
-julia> y_pred = predict(ann,X_new)
+y_pred = predict(ann, X_new)
 ```
 
 
