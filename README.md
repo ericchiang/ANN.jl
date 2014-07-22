@@ -24,7 +24,7 @@ julia> n_feats = 80
 
 julia> X = Array(Float64,n_obs,n_feats)
 
-julia> y = Array(Float64,n_obs)
+julia> y = Array(Int64,n_obs)
 
 julia> fit!(ann,X,y)
 
