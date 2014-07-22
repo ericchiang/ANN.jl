@@ -6,7 +6,7 @@ Implementation of backpropagation artificial neural networks in Julia.
 Install (from within Julia interpreter):
 -----------
 ```julia
-julia> Pkg.clone("git:https://github.com/EricChiang/ANN.jl.git")
+julia> Pkg.clone("git@github.com:EricChiang/ANN.jl.git")
 ```
 
 Usage:
