@@ -5,7 +5,7 @@ type NeuralLayer
     a_func::Function     # activation function
     a_derv::Function     # activation funciton derivative
 
-    # The following must be tracked for back propigation
+    # The following must be tracked for back propagation
     hx::Vector{Float64}  # input values
     pa::Vector{Float64}  # pre activation values
     pr::Vector{Float64}  # predictions (activation values)
@@ -62,13 +62,13 @@ function ArtificialNeuralNetwork(n_hidden_units::Integer)
                                  Array(Int64,0))
 end
 
-function forward_propigate(nl::NeuralLayer,x::Vector{Float64})
+function forward_propagate(nl::NeuralLayer,x::Vector{Float64})
     nl.hx = x
     nl.pa = nl.b + nl.w * x
     nl.pr = nl.a_func(nl.pa)
 end
 
-function back_propigate(nl::NeuralLayer,output_gradient::Vector{Float64})
+function back_propagate(nl::NeuralLayer,output_gradient::Vector{Float64})
     nl.wgr = output_gradient * nl.hx' # compute weight gradient
     nl.bgr = output_gradient # compute bias gradient
     nl.w' * output_gradient # return gradient of level below
@@ -111,11 +111,11 @@ function fit!(ann::ArtificialNeuralNetwork,
             output_gradient = -(y_hat - y_pred)
             for j = n_layers:-1:2
                 # This returns the gradient of the j-1 layer
-                next_layer_gr = back_propigate(layers[j],output_gradient)
+                next_layer_gr = back_propagate(layers[j],output_gradient)
                 next_layer = layers[j-1]
                 output_gradient = next_layer_gr .* next_layer.a_derv(next_layer.pa)
             end
-            back_propigate(layers[1],output_gradient)
+            back_propagate(layers[1],output_gradient)
 
             # Compute delta and step
             for j = 1:n_layers
@@ -133,7 +133,7 @@ end
 # Predict class probabilities for a given observation
 function predict(ann::ArtificialNeuralNetwork,x::Vector{Float64})
     for i in 1:length(ann.layers)
-        x = forward_propigate(ann.layers[i],x)
+        x = forward_propagate(ann.layers[i],x)
     end
     x
 end
